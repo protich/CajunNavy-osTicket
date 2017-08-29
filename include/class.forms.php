@@ -3074,7 +3074,11 @@ class TextboxWidget extends Widget {
             <?php echo implode(' ', array_filter(array(
                 $size, $maxlength, $classes, $autocomplete, $disabled,
                 $translatable, $placeholder, $autofocus))); ?>
+            <?php if ($type == 'email') { ?>
+            name="email"
+            <?php } else { ?>
             name="<?php echo $this->name; ?>"
+            <?php } ?>
             value="<?php echo Format::htmlchars($this->value); ?>"/>
         <?php
     }

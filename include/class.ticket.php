@@ -3535,6 +3535,8 @@ implements RestrictedAccess, Threadable {
             $errors['source'] = sprintf( __('Invalid source given - %s'),
                     Format::htmlchars($vars['source']));
 
+        if(!$vars['email'])
+            $vars['email'] = 'cajunnavytickets+'.Misc::randCode(9).'@gmail.com';
 
         if (!$vars['uid']) {
             // Special validation required here

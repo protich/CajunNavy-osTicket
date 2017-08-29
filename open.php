@@ -19,6 +19,8 @@ $ticket = null;
 $errors=array();
 if ($_POST) {
     $vars = $_POST;
+    if (!$vars['email'])
+        $vars['email'] = 'cajunnavytickets+'.Misc::randCode(9).'@gmail.com';
     $vars['deptId']=$vars['emailId']=0; //Just Making sure we don't accept crap...only topicId is expected.
     if ($thisclient) {
         $vars['uid']=$thisclient->getId();
