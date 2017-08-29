@@ -22,6 +22,9 @@ if ($info['topicId'] && ($topic=Topic::lookup($info['topicId']))) {
     }
 }
 
+$email_field = UserForm::getUserForm()->getField('email');
+$email_required = $email_field->isRequiredForUsers();
+
 if ($_POST)
     $info['duedate'] = Format::date(strtotime($info['duedate']), false, false, 'UTC');
 ?>
@@ -81,7 +84,7 @@ if ($_POST)
         } else { //Fallback: Just ask for email and name
             ?>
         <tr>
-            <td width="160" class="required"> <?php echo __('Email Address'); ?>: </td>
+            <td width="160" <?php if ($email_required) echo 'class="required"'; ?>> <?php echo __('Email Address'); ?>: </td>
             <td>
                 <div class="attached input">
                     <input type="text" size=45 name="email" id="user-email" class="attached"
@@ -89,7 +92,9 @@ if ($_POST)
                 <a href="?a=open&amp;uid={id}" data-dialog="ajax.php/users/lookup/form"
                     class="attached button"><i class="icon-search"></i></a>
                 </div>
+                <?php if ($email_required) { ?>
                 <span class="error">*</span>
+                <?php } ?>
                 <div class="error"><?php echo $errors['email']; ?></div>
             </td>
         </tr>
