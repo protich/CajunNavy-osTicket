@@ -451,7 +451,21 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
     foreach($answers as $a) {
         if (!($v = $a->display()))
             continue;
-        $displayed[] = array($a->getLocal('label'), $v);
+
+        if ($a->getLocal('name') == 'address') {
+          $displayed[] = array($a->getLocal('label'), $v, $a->getLocal('id'), true);
+          $address = $v;
+        }
+        else
+          $displayed[] = array($a->getLocal('label'), $v, $a->getLocal('id'), false);
+
+        if ($a->getLocal('name') == 'city')
+          $city = $v;
+
+        if ($a->getLocal('name') == 'zipcode')
+          $zipcode = $v;
+
+        $fullAddress = $address . ' ' . $city . ' ' . $zipcode;
     }
     if (count($displayed) == 0)
         continue;
@@ -462,17 +476,34 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
     </thead>
     <tbody>
 <?php
-    foreach ($displayed as $stuff) {
-        list($label, $v) = $stuff;
+foreach ($displayed as $stuff) {
+    list($label, $v, $id, $bool) = $stuff;
 ?>
-        <tr>
-            <td width="200"><?php
-echo Format::htmlchars($label);
-            ?>:</th>
-            <td><?php
-echo $v;
-            ?></td>
-        </tr>
+    <tr>
+      <?php if ($role->hasPerm(TicketModel::PERM_EDIT)) {?>
+        <td width="200"><?php echo Format::htmlchars($label); ?>:</th> </td>
+        <td>
+          <a class="ticket-action" id="inline-update" data-placement="bottom" data-toggle="tooltip" title="<?php echo __('Update'); ?>"
+              data-redirect="tickets.php?id=<?php echo $ticket->getId(); ?>"
+
+              href="#tickets/<?php echo $ticket->getId(); ?>/field/<?php echo $id; ?>/edit">
+              <?php echo $v; ?>
+          </a>
+          <?php
+            if ($bool)
+              echo '<a href="http://maps.google.com/maps?q=' . $fullAddress .'"target=_blank"><i class="icon-globe"></i> Map</a>';
+           ?>
+         </td>
+        <?php } else { ?>
+          <td width="200">
+              <?php echo Format::htmlchars($label);?>:</th>
+          </td>
+          <td>
+            <?php echo $v; ?>
+          </td>
+              <?php
+            } ?>
+    </tr>
 <?php } ?>
     </tbody>
     </table>
